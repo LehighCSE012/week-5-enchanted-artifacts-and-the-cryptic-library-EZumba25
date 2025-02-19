@@ -4,17 +4,17 @@ def discover_artifact(player_stats, artifacts, artifact_name):
     if artifact_name in artifacts:
         artifact = artifacts[artifact_name]
         print(f"You found {artifact_name}: {artifact['description']}")
-        
+
         if artifact['effect'] == "increases health":
             player_stats['health'] += artifact['power']
         elif artifact['effect'] == "enhances attack":
             player_stats['attack'] += artifact['power']
-        
+
         print(f"Effect: {artifact['effect']} (+{artifact['power']})")
         del artifacts[artifact_name]  # Remove artifact after discovery
     else:
         print("You found nothing of interest.")
-    
+
     return player_stats, artifacts
 
 def find_clue(clues, new_clue):
@@ -25,11 +25,22 @@ def find_clue(clues, new_clue):
         print(f"You discovered a new clue: {new_clue}")
     return clues
 
+def acquire_item(inventory, item):
+    """Adds an item to the player's inventory if it's not None."""
+    if item:
+        inventory.append(item)
+        print(f"You acquired: {item}")
+    return inventory
+
 def enter_dungeon(player_stats, inventory, dungeon_rooms, clues):
     for room in dungeon_rooms:
         name, item, challenge_type, challenge_outcome = room
-        print(f"You entered: {name}")
-        
+        print(f"You entered: {name}")  # Use `name` (already used)
+        if item:
+            print(f"You found an item: {item}")  # Now using `item`
+        if challenge_type:
+            print(f"A {challenge_type} challenge awaits!")  # Now using `challenge_type`
+
         if name == "Cryptic Library":
             print("A vast library filled with ancient, cryptic texts.")
             clue_pool = [
