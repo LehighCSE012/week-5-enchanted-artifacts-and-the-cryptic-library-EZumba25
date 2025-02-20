@@ -1,25 +1,30 @@
 import random
 
 def discover_artifact(player_stats, artifacts, artifact_name):
-    """Function to discover an artifact and apply its effects."""
+    """Function to discover an artifact and apply its effects using a dictionary."""
     if artifact_name in artifacts:
         artifact = artifacts[artifact_name]
         print(f"You discovered: {artifact_name} - {artifact['description']}")
-        
-        # Apply the effect of the artifact
-        if artifact['effect'] == 'increases health':
-            player_stats['health'] += artifact['power']
-            print(f"{artifact_name} increases your health by {artifact['power']}!")
-        elif artifact['effect'] == 'enhances attack':
-            player_stats['attack'] += artifact['power']
-            print(f"{artifact_name} enhances your attack by {artifact['power']}!")
-        elif artifact['effect'] == 'solves puzzles':
-            print(f"{artifact_name} allows you to bypass puzzles!")
 
-        # Remove the artifact from the dictionary
+        # Map artifact effects to corresponding actions
+        effects_map = {
+            'increases health': lambda: player_stats.update({'health': player_stats['health'] + artifact['power']}),
+            'enhances attack': lambda: player_stats.update({'attack': player_stats['attack'] + artifact['power']}),
+            'solves puzzles': lambda: print(f"{artifact_name} allows you to bypass puzzles!")
+        }
+        # Apply the artifact effect
+        effect_action = effects_map.get(artifact['effect'])
+        if effect_action:
+            effect_action()
+            if artifact['effect'] != 'solves puzzles':  # Only remove artifact if it doesn't solve puzzles
+                print(f"{artifact_name} effect applied!")
+            else:
+                print(f"{artifact_name} will help you bypass puzzles in the future!")
+        
+        # Remove the artifact from the dictionary after being used
         del artifacts[artifact_name]
     else:
-        print("You found nothing of interest.")
+        print("You found nothing of interest.")  
     return player_stats, artifacts
 
 def find_clue(clues, new_clue):
@@ -57,6 +62,7 @@ def enter_dungeon(player_stats, inventory, dungeon_rooms, clues):
                 player_stats['health'] += 10  # Update health as per puzzle outcome
             else:
                 print("You must solve the puzzles yourself.")
+                break
 
         # Return updated player stats, inventory, and clues
         return player_stats, inventory, clues
