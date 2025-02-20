@@ -32,21 +32,71 @@ def monster_attack(player_stats):
         player_stats['health'] = max(player_stats['health'] - 10, 0)
     return player_stats
 
-def handle_puzzle(player_stats, challenge_outcome):
-    """Handles puzzle challenges in the dungeon."""
-    print("You encounter a puzzle!")
-    choice = input("Do you want to 'solve' or 'skip' the puzzle? ").strip().lower()
-    if choice == "solve":
-        success = random.choice([True, False])
-        success_message, failure_message, health_change = challenge_outcome
-        if success:
-            print(success_message)
-        else:
-            print(failure_message)
-        player_stats['health'] = max(player_stats['health'] + health_change, 0)
+def handle_puzzle(puzzle, choice=None):
+    print(puzzle["question"])
+    for i, option in enumerate(puzzle["options"], start=1):
+        print(f"{i}. {option}")
+
+    # If choice is None, only display the puzzle
+    if choice is None:
+        return None  
+
+    # Validate choice before accessing list index
+    if not (1 <= choice <= len(puzzle["options"])):
+        print("Invalid choice. Please enter a valid number.")
+        return None  
+
+    # Process the answer
+    if puzzle["options"][choice - 1] == puzzle["answer"]:
+        print("Correct! You solved the puzzle.")
+        return True
     else:
-        print("You chose to skip the puzzle.")
-    return player_stats
+        print("Incorrect. Try again later.")
+        return False
+
+
+def enter_dungeon(player_stats, inventory, clues, dungeon_rooms, current_room_index):
+    # Extract the current room's data from the tuple
+    room_description, item, challenge_type, challenge_outcome = dungeon_rooms[current_room_index]
+    
+    print(f"You have entered: {room_description}")
+
+    if challenge_type == "puzzle":
+        puzzle, success_message, failure_message, health_penalty = challenge_outcome  
+
+        # Display puzzle initially
+        handle_puzzle(puzzle, choice=None)  
+
+        while True:
+            try:
+                user_input = input("Enter the number of your choice: ").strip()
+                
+                # Allow staff usage
+                if "staff_of_wisdom" in inventory:
+                    use_staff = input("Use the Staff of Wisdom to bypass the puzzle? (yes/no): ").strip().lower()
+                    if use_staff == "yes":
+                        inventory.remove("staff_of_wisdom")  # Staff is now removed
+                        print("You used the Staff of Wisdom to bypass the puzzle!")
+                        print(success_message)  
+                        return player_stats, inventory, clues  # Return updated values
+
+                # Validate numeric input
+                user_choice = int(user_input)
+
+                # Process puzzle answer
+                result = handle_puzzle(puzzle, user_choice)
+
+                if result is True:
+                    print(success_message)
+                    return player_stats, inventory, clues  # Player succeeded
+                elif result is False:
+                    print(failure_message)
+                    player_stats["health"] -= health_penalty  # Apply penalty
+                    return player_stats, inventory, clues  # Player failed
+                
+            except ValueError:
+                print("Invalid input. Please enter a number.")
+
 
 def handle_trap(player_stats, challenge_outcome):
     """Handles trap challenge logic."""
