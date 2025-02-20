@@ -47,6 +47,8 @@ def handle_path_choice(player_health):
         if player_health == 0:
             print("You are barely alive!")
     return player_health
+import random
+
 def discover_artifact(player_stats, artifacts, artifact_name):
     """Function to discover an artifact and apply its effects using a dictionary."""
     if artifact_name in artifacts:
@@ -59,6 +61,7 @@ def discover_artifact(player_stats, artifacts, artifact_name):
             'enhances attack': lambda: player_stats.update({'attack': player_stats['attack'] + artifact['power']}),
             'solves puzzles': lambda: print(f"{artifact_name} allows you to bypass puzzles!")
         }
+        
         # Apply the artifact effect
         effect_action = effects_map.get(artifact['effect'])
         if effect_action:
@@ -71,11 +74,45 @@ def discover_artifact(player_stats, artifacts, artifact_name):
         # Remove the artifact from the dictionary after being used
         del artifacts[artifact_name]
     else:
-        print("You found nothing of interest.")  
+        print("You found nothing of interest.")
+        
     return player_stats, artifacts
 
+def combat_encounter(player_stats, monster_health, has_treasure):
+    """Simulate a combat encounter with a monster."""
+    print("\nYou encounter a monster! Get ready for battle!")
+
+    # Initialize combat stats
+    player_attack = player_stats['attack']
+    player_health = player_stats['health']
+
+    # Combat loop
+    while player_health > 0 and monster_health > 0:
+        # Player attacks monster
+        monster_health -= player_attack
+        print(f"You attack the monster! Monster's health is now {monster_health}.")
+
+        # Monster attacks player
+        if monster_health > 0:
+            monster_attack = random.randint(5, 15)  # Monster attack range
+            player_health -= monster_attack
+            print(f"The monster attacks you! Your health is now {player_health}.")
+
+    # Check the outcome of the combat
+    if player_health > 0:
+        print("\nYou defeated the monster!")
+        if has_treasure:
+            print("You found a treasure!")
+            return "treasure"  # Treasure found in combat
+        else:
+            print("No treasure found in this combat.")
+            return None  # No treasure found
+    else:
+        print("\nYou were defeated by the monster.")
+        return None  # No treasure if player is defeated
+
 def find_clue(clues, new_clue):
-    """Function to find and store a new clue."""
+    """Function to discover a new clue and add it to the set of clues."""
     if new_clue not in clues:
         clues.add(new_clue)
         print(f"You discovered a new clue: {new_clue}")
@@ -140,95 +177,64 @@ def enter_dungeon(player_stats, inventory, dungeon_rooms, clues):
     # Return updated player stats, inventory, and clues
     return player_stats, inventory, clues
 
-
-def display_player_status(player_stats):
-    """Function to display the current player stats."""
-    print(f"Player Health: {player_stats['health']}, Player Attack: {player_stats['attack']}")
-
-def check_for_treasure(treasure_obtained_in_combat):
-    """Function to check if a treasure is obtained."""
-    if treasure_obtained_in_combat:
-        print("You have obtained a treasure!")
-
-def combat_encounter(player_stats, monster_health, has_treasure):
-    """Function to simulate a combat encounter."""
-    print("A monster appears!")
-    while monster_health > 0 and player_stats['health'] > 0:
-        # Player attack
-        monster_health -= player_stats['attack']
-        print(f"You dealt {player_stats['attack']} damage. Monster's health is now {monster_health}.")
-
-        if monster_health <= 0:
-            print("You defeated the monster!")
-            return has_treasure
-
-        # Monster attack
-        player_stats['health'] -= 10
-        print(f"The monster attacks! You lost 10 health. Your health is now {player_stats['health']}.")
-
-    if player_stats['health'] <= 0:
-        print("You were defeated in combat!")
-    return None
-
-def handle_path_choice(player_stats):
-    """Function to simulate player path choice and update stats."""
-    print("\nChoose a path: 1. Combat, 2. Explore")
-    choice = input("Enter 1 or 2: ")
-    if choice == "1":
-        print("You chose to fight!")
-    elif choice == "2":
-        print("You chose to explore!")
-    return player_stats
-
 def main():
     """Main game loop."""
     
-    # Dungeon rooms with a new room: The Cryptic Library
-    dungeon_rooms = [
-        ("Dusty library", "key", "puzzle", ("Solved puzzle!", "Puzzle unsolved.", -5)),
-        ("Narrow passage, creaky floor", "torch", "trap", ("Avoided trap!", "Triggered trap!", -10)),
-        ("Grand hall, shimmering pool", "healing potion", "none", None),
-        ("Small room, locked chest", "treasure", "puzzle", ("Cracked code!", "Chest locked.", -5)),
-        ("Cryptic Library", None, "library", None)
-    ]
-
+    # Example player stats and other initializations
     player_stats = {'health': 100, 'attack': 5}
-    monster_health = 70
-    inventory = []
-    clues = set()
+    monster_health = 70  # Example monster health
 
-    artifacts = {
-        "amulet_of_vitality": {
-            "description": "A glowing amulet that enhances your life force.",
-            "power": 15,
-            "effect": "increases health"
-        },
-        "ring_of_strength": {
-            "description": "A powerful ring that boosts your attack damage.",
-            "power": 10,
-            "effect": "enhances attack"
-        },
-        "staff_of_wisdom": {
-            "description": "A staff imbued with ancient wisdom.",
-            "power": 5,
-            "effect": "solves puzzles"
-        }
-    }
+    # Randomly determine if there's treasure in combat
+    has_treasure = random.choice([True, False])
 
-    # Random chance to discover an artifact
-    if random.random() < 0.3:
-        artifact_name = random.choice(list(artifacts.keys()))
-        player_stats, artifacts = discover_artifact(player_stats, artifacts, artifact_name)
+    # Call combat encounter function
+    treasure_obtained_in_combat = combat_encounter(player_stats, monster_health, has_treasure)
 
-    # Enter dungeon and process rooms
-    if player_stats['health'] > 0:
+    if player_stats['health'] > 0:  # Check player health AFTER combat!
+        print(f"\nYour current health is: {player_stats['health']}")
+        
+        if treasure_obtained_in_combat:
+            print("You've obtained treasure during the combat!")
+        else:
+            print("No treasure obtained during combat.")
+        
+        # Continue with the rest of your game logic (e.g., artifact discovery, dungeon exploration)
+        # Randomly determine if an artifact is discovered after combat
+        if random.random() < 0.3:
+            artifact_keys = list(artifacts.keys())
+            if artifact_keys:
+                artifact_name = random.choice(artifact_keys)
+                player_stats, artifacts = discover_artifact(player_stats, artifacts, artifact_name)
+
+        # Dungeon exploration
+        dungeon_rooms = [
+            ("Dusty library", "key", "puzzle", ("Solved puzzle!", "Puzzle unsolved.", -5)),
+            ("Narrow passage, creaky floor", "torch", "trap", ("Avoided trap!", "Triggered trap!", -10)),
+            ("Grand hall, shimmering pool", "healing potion", "none", None),
+            ("Small room, locked chest", "treasure", "puzzle", ("Cracked code!", "Chest locked.", -5)),
+            ("Cryptic Library", None, "library", None)
+        ]
+        
+        clues = set()  # Empty set of clues
+        inventory = []  # Empty inventory
+        
         player_stats, inventory, clues = enter_dungeon(player_stats, inventory, dungeon_rooms, clues)
 
-    print("\n--- Game End ---")
-    print(f"Final Health: {player_stats['health']}")
-    print("Clues collected:")
-    for clue in clues:
-        print(f"- {clue}")
+        # End the game
+        print("\n--- Game End ---")
+        print(f"Final Health: {player_stats['health']}")
+        print("Final Inventory:")
+        for item in inventory:
+            print(f"- {item}")
+        print("Clues collected:")
+        if clues:
+            for clue in clues:
+                print(f"- {clue}")
+        else:
+            print("No clues.")
+        
+    else:
+        print("Game Over! You've been defeated.")
 
-if __name__ == "__main__":
-    main()
+# Example call to main function
+main()
