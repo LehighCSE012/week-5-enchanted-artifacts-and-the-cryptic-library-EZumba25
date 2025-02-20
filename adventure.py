@@ -105,19 +105,6 @@ def discover_artifact(player_stats, artifacts, artifact_name):
         print("You found nothing of interest.")
     return player_stats, artifacts
 
-
-# Function to find a new clue
-def find_clue():
-    """Simulates finding a clue in the library."""
-    clues_available = [
-        "The key to the vault lies in the Eastern room.",
-        "Only the bravest may face the beast in the dark hall.",
-        "The puzzle of the moon can only be solved with light.",
-        "The hidden treasure is guarded by fire and water."
-    ]
-    # Randomly choose a clue
-    return random.choice(clues_available)
-
 # Combat encounter function
 def combat_encounter(player_stats, monster_health, has_treasure):
     """Handles the combat encounter between the player and the monster."""
@@ -132,7 +119,6 @@ def combat_encounter(player_stats, monster_health, has_treasure):
         return False, player_stats
     print("You defeated the monster!")
     return has_treasure, player_stats
-
 
 # Function to handle entering the dungeon and exploring rooms
 def enter_dungeon(player_stats, inventory, dungeon_rooms, clues):
@@ -154,10 +140,11 @@ def enter_dungeon(player_stats, inventory, dungeon_rooms, clues):
         
         # Check if the player has the staff_of_wisdom and can bypass a puzzle
         if "staff_of_wisdom" in inventory and challenge_type == "puzzle":
-            bypass = input("Do you want to bypass this puzzle using your knowledge? (yes/no) ").strip().lower()
-            if bypass == "yes":
-                print("You use the Staff of Wisdom to bypass the puzzle!")
-                continue  # Skip the puzzle and proceed with the next room
+            print("You use the Staff of Wisdom to bypass the puzzle!")
+            success_message, failure_message, health_change = challenge_outcome
+            print(success_message)
+            player_stats['health'] = max(player_stats['health'] + health_change, 0)
+            continue  # Skip the puzzle and proceed with the next room
 
         # Handle different challenges based on the room's challenge type
         if challenge_type == "puzzle":
@@ -177,6 +164,15 @@ def enter_dungeon(player_stats, inventory, dungeon_rooms, clues):
 
     return player_stats, inventory, clues
 
+def find_clue():
+    """Simulates finding a clue in the library."""
+    clues_available = [
+        "The key to the vault lies in the Eastern room.",
+        "Only the bravest may face the beast in the dark hall.",
+        "The puzzle of the moon can only be solved with light.",
+        "The hidden treasure is guarded by fire and water."
+    ]
+    return random.choice(clues_available)
 
 def check_for_treasure(inventory):
     """Checks if the player has obtained the treasure."""
@@ -216,12 +212,23 @@ def main():
     if player_stats['health'] > 0:
         player_stats = handle_path_choice(player_stats)
         
+        # Combat encounter
         treasure_obtained_in_combat, player_stats = combat_encounter(player_stats, monster_health, has_treasure)
+        display_player_status(player_stats)  # Display updated stats after combat
         
         if treasure_obtained_in_combat:
             inventory = acquire_item(inventory, "treasure")
         
+        # Artifact discovery logic
+        if random.random() < 0.3:  # 30% chance to discover an artifact
+            artifact_name = random.choice(list(artifacts.keys()))
+            player_stats, artifacts = discover_artifact(player_stats, artifacts, artifact_name)
+            display_player_status(player_stats)  # Display updated stats after artifact discovery
+        
+        # Enter dungeon
         player_stats, inventory, clues = enter_dungeon(player_stats, inventory, dungeon_rooms, clues)
+        
+        # Check for treasure
         check_for_treasure(inventory)
 
 if __name__ == "__main__":
