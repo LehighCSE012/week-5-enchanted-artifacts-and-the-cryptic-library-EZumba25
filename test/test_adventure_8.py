@@ -11,7 +11,7 @@ def test_cryptic_library_room_clues_found(capsys):
     clues = set()
     artifacts = {}
 
-    enter_dungeon(player_stats, inventory, dungeon_rooms, clues)
+    enter_dungeon(player_stats, inventory, dungeon_rooms, clues, artifacts)
     captured = capsys.readouterr()
     assert "You enter the Cryptic Library." in captured.out
     assert "You discovered a new clue:" in captured.out
@@ -24,7 +24,7 @@ def test_cryptic_library_room_staff_of_wisdom_effect(capsys):
     clues = set()
     artifacts = {}
 
-    enter_dungeon(player_stats, inventory, dungeon_rooms, clues)
+    enter_dungeon(player_stats, inventory, dungeon_rooms, clues, artifacts)
     captured = capsys.readouterr()
     assert "The Staff of Wisdom hums in your hand" in captured.out
     assert "You feel you could now bypass a puzzle" in captured.out
@@ -36,7 +36,7 @@ def test_cryptic_library_room_no_staff_no_bypass_message(capsys):
     clues = set()
     artifacts = {}
 
-    enter_dungeon(player_stats, inventory, dungeon_rooms, clues)
+    enter_dungeon(player_stats, inventory, dungeon_rooms, clues, artifacts)
     captured = capsys.readouterr()
     assert "The Staff of Wisdom hums in your hand" not in captured.out
     assert "You feel you could now bypass a puzzle" not in captured.out # No bypass message
@@ -48,5 +48,5 @@ def test_cryptic_library_room_finds_two_clues():
     clues = set()
     artifacts = {}
 
-    enter_dungeon(player_stats, inventory, dungeon_rooms, clues)
+    enter_dungeon(player_stats, inventory, dungeon_rooms, clues, artifacts)
     assert len(clues) == 2 # Exactly two clues should be found (as per assignment spec)
