@@ -243,7 +243,7 @@ def main():
             artifact_name = random.choice(list(artifacts.keys()))
             player_stats, artifacts = discover_artifact(player_stats, artifacts, artifact_name)
             display_player_status(player_stats)  # Display updated stats after artifact discovery
-        
+
         # Enter dungeon
         player_stats, inventory, clues = enter_dungeon(player_stats, inventory, dungeon_rooms, clues)
         
