@@ -1,6 +1,6 @@
 import random
 
-# Inventory System
+# Function to acquire an item and add to inventory
 def acquire_item(inventory, item):
     """Appends the item to the inventory list and notifies the player."""
     inventory.append(item)
@@ -97,6 +97,7 @@ def discover_artifact(player_stats, artifacts, artifact_name):
             print(f"Your attack increased by {artifact['power']}!")
         elif artifact['effect'] == "solves puzzles" and artifact_name == "staff_of_wisdom":
             print("You now have the knowledge to bypass puzzles in the dungeon!")
+            player_stats['staff_used'] = False  # Track that the staff is acquired
         
         # Remove the artifact after it's used
         del artifacts[artifact_name]
@@ -123,6 +124,7 @@ def combat_encounter(player_stats, monster_health, has_treasure):
 # Function to handle entering the dungeon and exploring rooms
 def enter_dungeon(player_stats, inventory, dungeon_rooms, clues):
     """Handles entering a dungeon room, applying challenges and item acquisitions."""
+    library_visited = False  # Track if the library room is visited
     for room in dungeon_rooms:
         room_description, item, challenge_type, challenge_outcome = room
         print(f"\n{room_description}")
@@ -137,14 +139,17 @@ def enter_dungeon(player_stats, inventory, dungeon_rooms, clues):
             clue = find_clue()
             clues.add(clue)  # Add the clue to the clues set
             print(f"You discovered a clue: {clue}")
+            library_visited = True  # Mark that the library has been visited
         
         # Check if the player has the staff_of_wisdom and can bypass a puzzle
-        if "staff_of_wisdom" in inventory and challenge_type == "puzzle":
-            print("You use the Staff of Wisdom to bypass the puzzle!")
-            success_message, failure_message, health_change = challenge_outcome
-            print(success_message)
-            player_stats['health'] = max(player_stats['health'] + health_change, 0)
-            continue  # Skip the puzzle and proceed with the next room
+        if "staff_of_wisdom" in inventory and challenge_type == "puzzle" and library_visited and len(clues) > 0:
+            if not player_stats.get('staff_used', False):
+                print("You use the Staff of Wisdom to bypass the puzzle!")
+                success_message, failure_message, health_change = challenge_outcome
+                print(success_message)
+                player_stats['health'] = max(player_stats['health'] + health_change, 0)
+                player_stats['staff_used'] = True  # Mark the staff as used
+                continue  # Skip the puzzle and proceed with the next room
 
         # Handle different challenges based on the room's challenge type
         if challenge_type == "puzzle":
@@ -184,7 +189,7 @@ def check_for_treasure(inventory):
 # Main game loop
 def main():
     """Main function to run the adventure game."""
-    player_stats = {'health': 100, 'attack': 5}
+    player_stats = {'health': 100, 'attack': 5, 'staff_used': False}
     monster_health = 70
     inventory = []
     clues = set()
@@ -232,4 +237,4 @@ def main():
         check_for_treasure(inventory)
 
 if __name__ == "__main__":
-    main()
+    main
