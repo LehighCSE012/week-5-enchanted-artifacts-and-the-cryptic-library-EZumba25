@@ -33,18 +33,6 @@ def monster_attack(player_stats):
     return player_stats
 
 def handle_puzzle(puzzle_data, choice=None):
-    """Handles a puzzle challenge, validating user input.
-
-    Args:
-        puzzle_data (dict): A dictionary containing the puzzle question, options, and answer.
-        choice (int, optional): The player's chosen option (1-based index). 
-                                If None, only displays the puzzle without prompting for input. 
-                                Defaults to None.
-
-    Returns:
-        tuple: (bool, None) → True if solved correctly, False if incorrect. 
-               (None, None) → If no choice was made.
-    """
 
     # Display the puzzle if choice=None (e.g., before the staff usage prompt)
     if choice is None:
