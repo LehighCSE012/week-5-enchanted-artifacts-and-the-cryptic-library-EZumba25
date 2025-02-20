@@ -139,10 +139,11 @@ def enter_dungeon(player_stats, inventory, dungeon_rooms, clues):
         # Check if the room is a library and the player discovers a clue
         if challenge_type == "library":
             print("You step into the Cryptic Library!")
-            clue = find_clue()
-            clues.add(clue)  # Add the clue to the clues set
-            print(f"You discovered a clue: {clue}")
-            library_visited = True  # Mark that the library has been visited
+            clues_found = find_clue()  # Get the list of clues
+
+            for new_clue in clues_found: # loop through the clues
+                clues = find_clue(clues, new_clue) # use the provided function to add to the set
+            library_visited = True
         
         # Check if the player has the staff_of_wisdom and can bypass a puzzle
         if "staff_of_wisdom" in inventory and challenge_type == "puzzle" and library_visited and len(clues) > 0:
@@ -172,15 +173,25 @@ def enter_dungeon(player_stats, inventory, dungeon_rooms, clues):
 
     return player_stats, inventory, clues
 
-def find_clue():
-    """Simulates finding clues in the library."""
+def generate_clues():
+    """Generates a list of two unique clues."""
     clues_available = [
         "The key to the vault lies in the Eastern room.",
         "Only the bravest may face the beast in the dark hall.",
         "The puzzle of the moon can only be solved with light.",
         "The hidden treasure is guarded by fire and water."
     ]
-    return random.sample(clues_available, 2)  # Select two unique clues randomly
+    return random.sample(clues_available, 2) # Select two unique clues randomly
+
+def find_clue(clues, new_clue):
+    """Adds a new clue to the set of clues if it's not already present."""
+    if new_clue not in clues: # use set operation 'in' for check
+        clues.add(new_clue)      # use set operation 'add' to add the clue.
+        print(f"You discovered a new clue: {new_clue}")
+    else:
+        print("You already know this clue.")
+    return clues # return the updated clues set.
+
 
 def check_for_treasure(inventory):
     """Checks if the player has obtained the treasure."""
