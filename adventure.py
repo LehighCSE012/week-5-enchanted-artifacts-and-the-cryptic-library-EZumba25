@@ -34,11 +34,9 @@ def monster_attack(player_health):
    return player_health
 
 def display_player_status(player_stats):
-    """Displays player health and attack."""
     print(f"Health: {player_stats['health']}, Attack: {player_stats['attack']}")
 
 def display_inventory(inventory):
-    """Displays player inventory."""
     if inventory:
         for item in inventory:
             print(f"- {item}")
@@ -46,7 +44,6 @@ def display_inventory(inventory):
         print("Inventory is empty.")
 
 def handle_path_choice(player_stats):
-    """Handles player path choice."""
     print("\nYou come to a fork in the path.")
     print("1. Take the left path.")
     print("2. Take the right path.")
@@ -69,7 +66,6 @@ def handle_path_choice(player_stats):
     return player_stats
 
 def combat_encounter(player_stats, monster_health, has_treasure):
-    """Simulates combat."""
     print("\nA wild monster appears!")
 
     while player_stats['health'] > 0 and monster_health > 0:
@@ -97,14 +93,12 @@ def combat_encounter(player_stats, monster_health, has_treasure):
     return None
 
 def check_for_treasure(treasure):
-    """Checks for treasure."""
     if treasure:
         print(f"Congratulations! You found a {treasure}!")
     else:
         print("No treasure was found.")
 
 def find_clue(clues, new_clue):
-    """Adds a clue to the set."""
     if new_clue not in clues:
         clues.add(new_clue)
         print(f"You discovered a new clue: {new_clue}")
@@ -113,7 +107,6 @@ def find_clue(clues, new_clue):
     return clues
 
 def discover_artifact(player_stats, artifacts, artifact_name):
-    """Handles artifact discovery."""
     if artifact_name in artifacts:
         artifact = artifacts[artifact_name]
         print(artifact["description"])
@@ -127,16 +120,14 @@ def discover_artifact(player_stats, artifacts, artifact_name):
         elif artifact["effect"] == "solves puzzles":
             print("This artifact helps you solve puzzles.")
 
-        del artifacts[artifact_name]  # Remove from dictionary after discovery
+        del artifacts[artifact_name]
     else:
         print("You found nothing of interest.")
 
     return player_stats, artifacts
 
-def enter_dungeon(player_stats, inventory, dungeon_rooms, clues, artifacts):
-    """Enters the dungeon and handles room logic."""
-
-    for room_description, item, challenge_type, challenge_outcome in dungeon_rooms[:]: # Iterate over a copy
+def enter_dungeon(player_stats, inventory, dungeon_rooms, clues):
+    for room_description, item, challenge_type, challenge_outcome in dungeon_rooms:
         print(f"\nYou enter a {room_description}.")
 
         if challenge_type == "library":
@@ -151,17 +142,11 @@ def enter_dungeon(player_stats, inventory, dungeon_rooms, clues, artifacts):
             for clue in selected_clues:
                 clues = find_clue(clues, clue)
 
-            if "staff_of_wisdom" in artifacts:
+            if "staff_of_wisdom" in artifacts.keys():
                 print("The staff of wisdom helps you understand the clues.")
                 player_stats['health'] += 10
                 print("You bypass the puzzle in the Dusty Library and gain 10 health.")
-
-                # Remove the Dusty Library
-                for i, room in enumerate(dungeon_rooms):
-                    if room[0] == "Dusty library":
-                        del dungeon_rooms[i]
-                        break
-
+                dungeon_rooms = [room for room in dungeon_rooms if room[0] != "Dusty library"]
                 print("The Dusty Library is no longer accessible.")
 
         elif challenge_type == "puzzle":
@@ -197,7 +182,6 @@ def enter_dungeon(player_stats, inventory, dungeon_rooms, clues, artifacts):
 
     return player_stats, inventory, clues
 
-
 def main():
     dungeon_rooms = [
         ("Dusty library", "key", "puzzle", ("Solved puzzle!", "Puzzle unsolved.", -5)),
@@ -222,7 +206,7 @@ def main():
 
     if player_stats['health'] > 0:
         treasure_obtained_in_combat = combat_encounter(player_stats, monster_health, has_treasure)
-        if treasure_obtained_in_combat:
+        if treasure_obtained_in_combat is not None:
             check_for_treasure(treasure_obtained_in_combat)
 
         if random.random() < 0.3:
@@ -244,6 +228,7 @@ def main():
                     print(f"- {clue}")
             else:
                 print("No clues.")
+
 
 if __name__ == "__main__":
     main()
