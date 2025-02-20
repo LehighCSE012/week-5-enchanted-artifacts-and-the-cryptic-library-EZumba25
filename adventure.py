@@ -190,113 +190,55 @@ def check_for_treasure(inventory):
         print("No treasure found.")
 
 # Main game loop
-
-
 def main():
-    # Initialize player stats and clues
-    player_stats = {
-        "health": 100,
-        "attack": 10,
-        "inventory": [],
-        "staff_used": False,
-    }
+    """Main function to run the adventure game."""
+    player_stats = {'health': 100, 'attack': 5, 'staff_used': False}
+    monster_health = 70
+    inventory = []
     clues = set()
-    library_visited = False
+
+    # Define artifacts
     artifacts = {
-        "staff_of_wisdom": {"description": "Allows bypassing a puzzle in the future."},
-        "amulet_of_strength": {"description": "Increases attack by 5."},
-        # Add more artifacts as needed
+        "staff_of_wisdom": {"description": "A staff that grants the knowledge to bypass puzzles.", "effect": "solves puzzles", "power": 0},
+        "healing_ring": {"description": "A magical ring that heals you.", "effect": "increases health", "power": 20},
+        "warrior_belt": {"description": "A belt that enhances your combat skills.", "effect": "enhances attack", "power": 5}
     }
 
-    # List of rooms in the dungeon, each room can have a specific challenge or event
-    dungeon_rooms = ["entrance", "puzzle_room", "combat_room", "treasure_room", "boss_room"]
+    dungeon_rooms = [
+        ("Dusty library", "key", "puzzle", ("Solved puzzle!", "Puzzle unsolved.", -5)),
+        ("Narrow passage, creaky floor", "torch", "trap", ("Avoided trap!", "Triggered trap!", -10)),
+        ("Grand hall, shimmering pool", "healing potion", "none", None),
+        ("Small room, locked chest", "treasure", "puzzle", ("Cracked code!", "Chest locked.", -5)),
+        ("Cryptic Library", None, "library", None)
+    ]
 
-    # Iterate through the dungeon rooms
-    for room in dungeon_rooms:
-        print(f"\nEntering the {room}...")
-        # Call enter_dungeon for each room
-        player_stats, clues = enter_dungeon(player_stats, clues, library_visited)
-
-        # Handle artifact discovery only after the dungeon exploration ends
-        player_stats, artifacts = discover_artifact(player_stats, artifacts)
-
-        # Display player status after each room
-        display_player_status(player_stats)
-
-    # Final status after all rooms are explored
-    print("\nDungeon exploration complete!")
+    has_treasure = random.choice([True, False])
+    
+    # Display player's initial stats
     display_player_status(player_stats)
 
-
-# Function for entering the dungeon rooms and handling challenges
-def enter_dungeon(player_stats, clues, library_visited):
-    """
-    Handles the dungeon exploration logic.
-    Args:
-    - player_stats: A dictionary with player's health, attack, etc.
-    - clues: A set of clues the player has found
-    - library_visited: A boolean indicating whether the player has visited the library.
-
-    Returns:
-    - Updated player_stats and clues.
-    """
-    # Here you can add logic to handle different room types (e.g., combat, puzzles, etc.)
-    challenge_type = "puzzle"  # Example: For now, assume every room has a puzzle.
-    
-    if "staff_of_wisdom" in player_stats.get("inventory", []):
-        if library_visited and len(clues) > 0:
-            # Bypass the puzzle using the staff_of_wisdom and clues
-            print("You used the Staff of Wisdom to bypass the puzzle!")
-            player_stats["health"] -= 5  # Example health decrease for bypassing a challenge
-        else:
-            print("You need clues from the library to bypass the puzzle.")
-    
-    # After finishing the room, return the updated player stats and clues
-    return player_stats, clues
-
-
-# Function for discovering artifacts
-def discover_artifact(player_stats, artifacts):
-    """
-    Randomly determines if an artifact is discovered and applies its effects.
-    Args:
-    - player_stats: A dictionary of the player's stats.
-    - artifacts: A dictionary of available artifacts and their effects.
-
-    Returns:
-    - Updated player_stats and artifacts.
-    """
-    if random.random() < 0.3:  # 30% chance to find an artifact
-        artifact_name = random.choice(list(artifacts.keys()))  # Randomly choose an artifact
-        artifact = artifacts[artifact_name]
-
-        print(f"Congratulations! You found the {artifact_name}. {artifact['description']}")
-
-        # Apply the artifact's effects
-        if artifact_name == "staff_of_wisdom":
-            if player_stats.get('staff_used', False) == False:
-                print("You now have the Staff of Wisdom!")
-                player_stats["inventory"].append("staff_of_wisdom")
-                player_stats["staff_used"] = False  # Mark as not used yet
-            else:
-                print("You've already used the Staff of Wisdom, it cannot be used again.")
+    if player_stats['health'] > 0:
+        player_stats = handle_path_choice(player_stats)
         
-        # Return updated player stats
-        return player_stats, artifacts
-    else:
-        print("No artifact was found this time.")
-        return player_stats, artifacts
-
-
-# Function to display player status
-def display_player_status(player_stats):
-    print(f"Health: {player_stats['health']}")
-    print(f"Attack: {player_stats['attack']}")
-    print(f"Inventory: {player_stats['inventory']}")
-    print(f"Staff Used: {player_stats['staff_used']}")
-
+        # Combat encounter
+        treasure_obtained_in_combat, player_stats = combat_encounter(player_stats, monster_health, has_treasure)
+        display_player_status(player_stats)  # Display updated stats after combat
+        
+        if treasure_obtained_in_combat:
+            inventory = acquire_item(inventory, "treasure")
+        
+        # Artifact discovery logic
+        if random.random() < 0.3:  # 30% chance to discover an artifact
+            artifact_name = random.choice(list(artifacts.keys()))
+            player_stats, artifacts = discover_artifact(player_stats, artifacts, artifact_name)
+            display_player_status(player_stats)  # Display updated stats after artifact discovery
+        
+        # Enter dungeon
+        player_stats, inventory, clues = enter_dungeon(player_stats, inventory, dungeon_rooms, clues)
+        
+        # Check if the player has obtained the treasure
+        check_for_treasure(inventory)
 
 # Run the game
 if __name__ == "__main__":
     main()
-
