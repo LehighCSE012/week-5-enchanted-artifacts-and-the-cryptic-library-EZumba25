@@ -28,23 +28,28 @@ def find_clue(clues, new_clue):
         print(f"You discovered a new clue: {new_clue}")
     return clues
 
-def enter_dungeon(player_stats, inventory, dungeon_rooms, clues, artifacts = None):
+def enter_dungeon(player_stats, inventory, dungeon_rooms, clues, artifacts=None):
     for room in dungeon_rooms:
         room_name, item, challenge_type, challenge_outcome = room
-        print(f"You entered {room_name}.")
+        print(f"You enter the {room_name}.")  # Match expected test string exactly
 
-        if room_name == "Cryptic Library":
+        if room_name == "The Cryptic Library":
             print("A vast library filled with ancient, cryptic texts.")
-            clue_options = ["The treasure is hidden where the dragon sleeps.", "The key lies with the gnome.",
-                            "Beware the shadows.", "The amulet unlocks the final door."]
+            clue_options = [
+                "The treasure is hidden where the dragon sleeps.",
+                "The key lies with the gnome.",
+                "Beware the shadows.",
+                "The amulet unlocks the final door."
+            ]
             selected_clues = random.sample(clue_options, 2)
+            
             for clue in selected_clues:
-                clues = find_clue(clues, clue)
+                clues = find_clue(clues, clue)  # Ensure clues are updated
 
             if "staff_of_wisdom" in inventory:
-                print("Your staff of wisdom allows you to decipher the clues, enabling you to bypass a puzzle challenge.")
-    
-    return player_stats, inventory, clues
+                print("The Staff of Wisdom hums in your hand, allowing you to decipher the texts effortlessly.")
+
+    return player_stats['health'], inventory, clues
 
 def combat_encounter(player_stats, monster_health, has_treasure):
     while player_stats['health'] > 0 and monster_health > 0:
