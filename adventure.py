@@ -6,18 +6,18 @@ def display_player_status(player_stats):
 def discover_artifact(player_stats, artifacts, artifact_name):
     if artifact_name in artifacts:  # Check if artifact exists
         artifact = artifacts[artifact_name]
-        print(f"You discovered {artifact_name.replace('_', ' ').title()}! {artifact['description']}")
-        
+        print(f"You discovered {artifact_name.replace('_',' ').title()}! {artifact['description']}")
+
         if artifact['effect'] == "increases health":
             player_stats['health'] += artifact['power']
         elif artifact['effect'] == "enhances attack":
             player_stats['attack'] += artifact['power']
-        
+
         print(f"Effect: {artifact['effect']}. Your stats have been updated.")
         del artifacts[artifact_name]  # Remove found artifact
     else:
         print("You found nothing of interest.")
-    
+
     return player_stats, artifacts
 
 def find_clue(clues, new_clue):
@@ -28,14 +28,15 @@ def find_clue(clues, new_clue):
         print(f"You discovered a new clue: {new_clue}")
     return clues
 
-def enter_dungeon(player_stats, inventory, dungeon_rooms, clues):
+def enter_dungeon(player_stats, inventory, dungeon_rooms, clues, artifacts = None):
     for room in dungeon_rooms:
         room_name, item, challenge_type, challenge_outcome = room
         print(f"You entered {room_name}.")
 
         if room_name == "Cryptic Library":
             print("A vast library filled with ancient, cryptic texts.")
-            clue_options = ["The treasure is hidden where the dragon sleeps.", "The key lies with the gnome.", "Beware the shadows.", "The amulet unlocks the final door."]
+            clue_options = ["The treasure is hidden where the dragon sleeps.", "The key lies with the gnome.",
+                            "Beware the shadows.", "The amulet unlocks the final door."]
             selected_clues = random.sample(clue_options, 2)
             for clue in selected_clues:
                 clues = find_clue(clues, clue)
@@ -91,7 +92,8 @@ def main():
             display_player_status(player_stats)
 
         if player_stats['health'] > 0:
-            player_stats, inventory, clues = enter_dungeon(player_stats, inventory, dungeon_rooms, clues)
+            player_stats, inventory, clues = enter_dungeon(player_stats, inventory, dungeon_rooms,
+            clues, artifacts)
             print("\n--- Game End ---")
             display_player_status(player_stats)
             print("Final Inventory:", inventory)
