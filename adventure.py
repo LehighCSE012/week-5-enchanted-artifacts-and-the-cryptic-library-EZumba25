@@ -1,5 +1,52 @@
 import random
 
+def acquire_item(inventory, item):
+    """Appends the item to the inventory list and notifies the player."""
+    inventory.append(item)
+    print(f"You acquired a {item}!.")
+    return inventory
+
+def display_inventory(inventory):
+    """Displays the player's current inventory."""
+    if not inventory:
+        print("Your inventory is empty.")
+    else:
+        print("Your inventory:")
+        for idx, item in enumerate(inventory, 1):
+            print(f"{idx}. {item}")
+
+def player_attack(monster_health):
+    """Simulates the player's attack on the monster."""
+    print("You strike the monster for 15 damage!")
+    return max(monster_health - 15, 0)
+
+def monster_attack(player_health):
+    """Simulates the monster's attack on the player."""
+    if random.random() < 0.5:
+        print("The monster lands a critical hit for 20 damage!")
+        player_health = max(player_health - 20, 0)
+    else:
+        print("The monster hits you for 10 damage!")
+        player_health = max(player_health - 10, 0)
+    return player_health
+
+# Adventure Game Functions
+def display_player_status(player_health):
+    """Displays the player's current health."""
+    print(f"Your current health: {player_health}")
+
+def handle_path_choice(player_health):
+    """Randomly determines the player's path and adjusts health accordingly."""
+    path = random.choice(["left", "right"])
+    if path == "left":
+        print("You encounter a friendly gnome who heals you for 10 health points.")
+        player_health = min(player_health + 10, 100)
+    else:
+        print("You fall into a pit and lose 15 health points.")
+        player_health = max(player_health - 15, 0)
+        if player_health == 0:
+            print("You are barely alive!")
+    return player_health
 def discover_artifact(player_stats, artifacts, artifact_name):
     """Function to discover an artifact and apply its effects using a dictionary."""
     if artifact_name in artifacts:
@@ -42,7 +89,7 @@ def enter_dungeon(player_stats, inventory, dungeon_rooms, clues):
         room_description, item, challenge_type, challenge_outcome = room
 
         print(f"\nEntering room: {room_description}")
-        
+
         if challenge_type == "library":
             # Handle Cryptic Library challenge
             clues_list = [
@@ -62,10 +109,37 @@ def enter_dungeon(player_stats, inventory, dungeon_rooms, clues):
                 player_stats['health'] += 10  # Update health as per puzzle outcome
             else:
                 print("You must solve the puzzles yourself.")
-                break
+        
+        elif challenge_type == "puzzle":
+            # Handle puzzle challenge, using the challenge_outcome
+            print("A puzzle challenge! Let's see if you solve it...")
+            if random.random() < 0.5:  # Random chance of solving the puzzle
+                print(challenge_outcome[0])  # "Solved puzzle!"
+                player_stats['health'] += challenge_outcome[2]  # Outcome health effect
+            else:
+                print(challenge_outcome[1])  # "Puzzle unsolved."
+                player_stats['health'] += challenge_outcome[2]  # Outcome health effect
+        
+        elif challenge_type == "trap":
+            # Handle trap challenge, using the challenge_outcome
+            print("A trap! Be careful!")
+            if random.random() < 0.7:  # Random chance of avoiding trap
+                print(challenge_outcome[0])  # "Avoided trap!"
+            else:
+                print(challenge_outcome[1])  # "Triggered trap!"
+                player_stats['health'] += challenge_outcome[2]  # Outcome health effect
+        
+        elif challenge_type == "none":
+            # No challenge in this room, just describe it
+            print("This room seems calm and without danger.")
+        
+        # After processing the challenge, if there is an item, the player can collect it
+        if item:
+            print(f"You found a {item}!")
 
-        # Return updated player stats, inventory, and clues
-        return player_stats, inventory, clues
+    # Return updated player stats, inventory, and clues
+    return player_stats, inventory, clues
+
 
 def display_player_status(player_stats):
     """Function to display the current player stats."""
