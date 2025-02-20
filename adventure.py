@@ -6,21 +6,21 @@ def display_player_status(player_stats):
 
 # Function to discover an artifact
 def discover_artifact(player_stats, artifacts, artifact_name):
-    if artifact_name in artifacts:  # Check if artifact exists
+    if artifact_name in artifacts:
         artifact = artifacts[artifact_name]
-        print(f"You discovered {artifact_name.replace('_', ' ').title()}! {artifact['description']}")
-
-        # Apply artifact effect
+        print(f"You found: {artifact_name} - {artifact['description']}")
+        
         if artifact['effect'] == "increases health":
             player_stats['health'] += artifact['power']
+            print(f"Your health increased by {artifact['power']} points!")
         elif artifact['effect'] == "enhances attack":
             player_stats['attack'] += artifact['power']
+            print(f"Your attack increased by {artifact['power']} points!")
 
-        print(f"Effect: {artifact['effect']}. Your stats have been updated.")
-        del artifacts[artifact_name]  # Remove found artifact
+        del artifacts[artifact_name]  # Remove artifact after it's been discovered
     else:
         print("You found nothing of interest.")
-
+    
     return player_stats, artifacts
 
 # Function to find a new clue
