@@ -190,6 +190,8 @@ def check_for_treasure(inventory):
         print("No treasure found.")
 
 # Main game loop
+
+
 def main():
     # Initialize player stats and clues
     player_stats = {
