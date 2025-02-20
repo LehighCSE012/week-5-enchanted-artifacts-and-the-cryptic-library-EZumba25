@@ -11,7 +11,7 @@ def test_dungeon_rooms_is_list_of_tuples():
     clues = set()
     artifacts = {}
     try:
-        enter_dungeon(player_stats, inventory, dungeon_rooms, clues, artifacts)
+        enter_dungeon(player_stats, inventory, dungeon_rooms, clues)
     except Exception as e:
         pytest.fail(f"enter_dungeon raised an exception with valid dungeon_rooms structure: {e}")
 
@@ -40,6 +40,6 @@ def test_dungeon_rooms_challenge_types():
     clues = set()
     artifacts = {}
     try:
-        enter_dungeon(player_stats, inventory, dungeon_rooms_types, clues, artifacts)
+        enter_dungeon(player_stats, inventory, dungeon_rooms_types, clues)
     except Exception as e:
         pytest.fail(f"enter_dungeon failed to handle all challenge types: {e}")
