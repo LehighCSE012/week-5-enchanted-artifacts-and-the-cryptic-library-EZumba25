@@ -233,8 +233,9 @@ def main():
         # Enter dungeon
         player_stats, inventory, clues = enter_dungeon(player_stats, inventory, dungeon_rooms, clues)
         
-        # Check for treasure
+        # Check if the player has obtained the treasure
         check_for_treasure(inventory)
 
+# Run the game
 if __name__ == "__main__":
-    main
+    main()
