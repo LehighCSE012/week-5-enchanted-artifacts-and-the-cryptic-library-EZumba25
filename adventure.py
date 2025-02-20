@@ -32,27 +32,52 @@ def monster_attack(player_stats):
         player_stats['health'] = max(player_stats['health'] - 10, 0)
     return player_stats
 
-def handle_puzzle(puzzle, choice=None):
-    print(puzzle["question"])
-    for i, option in enumerate(puzzle["options"], start=1):
-        print(f"{i}. {option}")
+def handle_puzzle(puzzle_data, choice=None):
+    """Handles a puzzle challenge, validating user input.
 
-    # If choice is None, only display the puzzle
+    Args:
+        puzzle_data (dict): A dictionary containing the puzzle question, options, and answer.
+        choice (int, optional): The player's chosen option (1-based index). 
+                                If None, only displays the puzzle without prompting for input. 
+                                Defaults to None.
+
+    Returns:
+        tuple: (bool, None) → True if solved correctly, False if incorrect. 
+               (None, None) → If no choice was made.
+    """
+
+    # Display the puzzle if choice=None (e.g., before the staff usage prompt)
     if choice is None:
-        return None  
+        print(puzzle_data["question"])
+        for i, option in enumerate(puzzle_data["options"], 1):
+            print(f"{i}. {option}")
+        return None, None  # Signal that no answer was processed
 
-    # Validate choice before accessing list index
-    if not (1 <= choice <= len(puzzle["options"])):
-        print("Invalid choice. Please enter a valid number.")
-        return None  
+    # Input validation loop
+    while True:
+        user_input = input("Choose an option (enter number): ")
 
-    # Process the answer
-    if puzzle["options"][choice - 1] == puzzle["answer"]:
-        print("Correct! You solved the puzzle.")
-        return True
+        try:
+            choice = int(user_input) - 1  # Convert to 0-based index
+            if 0 <= choice < len(puzzle_data["options"]):
+                break  # Valid choice
+            else:
+                print("Invalid choice. Please enter a number from the list.")
+        except ValueError:
+            print("Invalid input. Please enter a number.")
+
+    # Determine success
+    selected_option = puzzle_data["options"][choice]
+    success = selected_option == puzzle_data["answer"]
+
+    # Provide clearer success/failure messages
+    if success:
+        print(f" Correct! You solved the puzzle.")
     else:
-        print("Incorrect. Try again later.")
-        return False
+        print(f" Incorrect. The correct answer was: {puzzle_data['answer']}")
+
+    return success, None  # Returning a tuple to match expected structure
+
 
 
 def enter_dungeon(player_stats, inventory, clues, dungeon_rooms, current_room_index):
@@ -207,12 +232,19 @@ def enter_dungeon(player_stats, inventory, dungeon_rooms, clues):
 
         # Handle different challenges based on the room's challenge type
         if challenge_type == "puzzle":
-            player_stats = handle_puzzle(player_stats, challenge_outcome)
-        elif challenge_type == "trap":
-            player_stats = handle_trap(player_stats, challenge_outcome)
-        elif challenge_type == "library":
-            # The library challenge doesn't affect health, so no health change here
-            pass
+    # Ensure challenge_outcome contains puzzle_data in the correct format
+            puzzle_data, success_message, failure_message, health_penalty = challenge_outcome  
+    
+    # Call handle_puzzle correctly (ensure 'choice' is None initially)
+    player_stats, success = handle_puzzle(puzzle_data, choice=None) 
+
+    # Handle puzzle results based on success or failure
+    if success:
+        print(success_message)
+    else:
+        print(failure_message)
+        player_stats["health"] = max(0, player_stats["health"] - health_penalty)
+
 
         # Prevent entering a room if health is 0
         if player_stats['health'] <= 0:
