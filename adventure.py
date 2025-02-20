@@ -1,37 +1,34 @@
 import random
 
 def acquire_item(inventory, item):
-   """Appends the item to the inventory list and notifies the player."""
-   inventory.append(item)
-   print(f"You acquired a {item}!.")
-   return inventory
-
+    """Appends the item to the inventory list and notifies the player."""
+    inventory.append(item)
+    print(f"You acquired a {item}!.")
+    return inventory
 
 def display_inventory(inventory):
-   """Displays the player's current inventory."""
-   if not inventory:
-       print("Your inventory is empty.")
-   else:
-       print("Your inventory:")
-       for idx, item in enumerate(inventory, 1):
-           print(f"{idx}. {item}")
-
+    """Displays the player's current inventory."""
+    if not inventory:
+        print("Your inventory is empty.")
+    else:
+        print("Your inventory:")
+        for idx, item in enumerate(inventory, 1):
+            print(f"{idx}. {item}")
 
 def player_attack(monster_health):
-   """Simulates the player's attack on the monster."""
-   print("You strike the monster for 15 damage!")
-   return max(monster_health - 15, 0)
-
+    """Simulates the player's attack on the monster."""
+    print("You strike the monster for 15 damage!")
+    return max(monster_health - 15, 0)
 
 def monster_attack(player_health):
-   """Simulates the monster's attack on the player."""
-   if random.random() < 0.5:
-       print("The monster lands a critical hit for 20 damage!")
-       player_health = max(player_health - 20, 0)
-   else:
-       print("The monster hits you for 10 damage!")
-       player_health = max(player_health - 10, 0)
-   return player_health
+    """Simulates the monster's attack on the player."""
+    if random.random() < 0.5:
+        print("The monster lands a critical hit for 20 damage!")
+        player_health = max(player_health - 20, 0)
+    else:
+        print("The monster hits you for 10 damage!")
+        player_health = max(player_health - 10, 0)
+    return player_health
 
 def display_player_status(player_stats):
     print(f"Health: {player_stats['health']}, Attack: {player_stats['attack']}")
@@ -228,7 +225,6 @@ def main():
                     print(f"- {clue}")
             else:
                 print("No clues.")
-
 
 if __name__ == "__main__":
     main()
