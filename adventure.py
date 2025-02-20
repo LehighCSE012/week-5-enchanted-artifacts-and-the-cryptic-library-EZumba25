@@ -84,20 +84,23 @@ def display_player_status(player_stats):
 # Function to discover an artifact
 def discover_artifact(player_stats, artifacts, artifact_name):
     """Handles the discovery of an artifact and applies its effects on the player."""
-    if artifact_name in artifacts:
-        artifact = artifacts[artifact_name]
-        print(f"You discovered the {artifact_name}: {artifact['description']}")
+    artifact = artifacts.get(artifact_name, None)  # Using get() for safe access
+    if artifact:
+        print(f"You discovered the {artifact_name}: {artifact.get('description', 'No description available.')}")
         
         # Apply the effect based on the artifact's effect type
-        if artifact['effect'] == "increases health":
-            player_stats['health'] += artifact['power']
-            print(f"Your health increased by {artifact['power']}!")
-        elif artifact['effect'] == "enhances attack":
-            player_stats['attack'] += artifact['power']
-            print(f"Your attack increased by {artifact['power']}!")
-        elif artifact['effect'] == "solves puzzles" and artifact_name == "staff_of_wisdom":
+        effect_type = artifact.get('effect', 'none')
+        power = artifact.get('power', 0)  # Get the power of the artifact
+
+        if effect_type == "increases health":
+            player_stats['health'] += power
+            print(f"Your health increased by {power}!")
+        elif effect_type == "enhances attack":
+            player_stats['attack'] += power
+            print(f"Your attack increased by {power}!")
+        elif effect_type == "solves puzzles" and artifact_name == "staff_of_wisdom":
             print("You now have the knowledge to bypass puzzles in the dungeon!")
-            player_stats['staff_used'] = False  # Track that the staff is acquired
+            player_stats.update({'staff_used': False})  # Using update() to mark staff as used
         
         # Remove the artifact after it's used
         del artifacts[artifact_name]
@@ -170,14 +173,14 @@ def enter_dungeon(player_stats, inventory, dungeon_rooms, clues):
     return player_stats, inventory, clues
 
 def find_clue():
-    """Simulates finding a clue in the library."""
+    """Simulates finding clues in the library."""
     clues_available = [
         "The key to the vault lies in the Eastern room.",
         "Only the bravest may face the beast in the dark hall.",
         "The puzzle of the moon can only be solved with light.",
         "The hidden treasure is guarded by fire and water."
     ]
-    return random.choice(clues_available)
+    return random.sample(clues_available, 2)  # Select two unique clues randomly
 
 def check_for_treasure(inventory):
     """Checks if the player has obtained the treasure."""
