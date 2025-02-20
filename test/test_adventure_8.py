@@ -35,7 +35,7 @@ def test_cryptic_library_room_no_staff_no_bypass_message(capsys):
     inventory = [] # Player does not have staff
     clues = set()
     artifacts = {}
-
+    
     enter_dungeon(player_stats, inventory, dungeon_rooms, clues, artifacts)
     captured = capsys.readouterr()
     assert "The Staff of Wisdom hums in your hand" not in captured.out
