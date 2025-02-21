@@ -43,7 +43,8 @@ def combat_encounter(player_stats, monster_health, has_treasure):
         # Simulate player attack
         damage_dealt = player_stats['attack']
         monster_health -= damage_dealt
-        print(f"You attack the monster and deal{damage_dealt}damage.Monster health:{monster_health}")
+        print(f"You attack the monster and deal {damage_dealt} damage."
+              "Monster health:{monster_health}")
 
         # If the monster is still alive, it attacks back
         if monster_health > 0:
