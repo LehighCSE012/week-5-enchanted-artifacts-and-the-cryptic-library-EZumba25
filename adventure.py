@@ -94,15 +94,16 @@ def find_clue(clues, new_clue):
 
 def enter_dungeon(player_stats, inventory, dungeon_rooms, clues):
     """Handles the player's experience when entering a dungeon room."""
-    
-    for room in dungeon_rooms:
-        try:
-            # Attempt to unpack the room tuple
-            room_description, item, challenge_type, challenge_outcome = room
-        except ValueError as e:
-            raise ValueError(f"Incorrect number of values in room tuple: {room}") from e
 
-        # Ensure challenge_outcome is a tuple if the challenge type is not 'none'
+    for room in dungeon_rooms:
+        # Ensure room tuple has at least 4 elements
+        if len(room) != 4:
+            raise TypeError(f"Incorrect number of values in room tuple: {room}")
+
+        # Unpack room tuple
+        room_description, item, challenge_type, challenge_outcome = room
+
+        # Ensure challenge_outcome is a tuple if challenge_type is not 'none'
         if challenge_type.lower() != "none" and not isinstance(challenge_outcome, tuple):
             raise TypeError("Challenge outcome must be a tuple for non-'none' challenge types.")
 
@@ -117,7 +118,7 @@ def enter_dungeon(player_stats, inventory, dungeon_rooms, clues):
             print(f"You face a {challenge_type} challenge!")
 
             # Example challenge logic (random success/failure)
-            outcome = random.choice([True, False])  
+            outcome = random.choice([True, False])
             if outcome:
                 print(success_message)
             else:
