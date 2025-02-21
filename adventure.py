@@ -93,28 +93,36 @@ def find_clue(clues, new_clue):
     return clues
 
 def enter_dungeon(player_stats, inventory, dungeon_rooms, clues):
-    """Handle entering a dungeon room."""
-    current_room = random.choice(dungeon_rooms)
-    print(f"You enter the room: {current_room[0]}")
-    
-    if current_room[2] == "library":
-        clues_list = ["The treasure is hidden where the dragon sleeps.",
-                      "The key lies with the gnome.",
-                      "Beware the shadows.",
-                      "The amulet unlocks the final door."]
+    """Handles the player's experience when entering a dungeon room."""
+    for room in dungeon_rooms:
+        try:
+            # Attempt to unpack the room tuple
+            room_description, item, challenge_type, challenge_outcome = room
+        except ValueError:
+            raise ValueError(f"Incorrect number of values in room tuple: {room}")
         
-        selected_clues = random.sample(clues_list, 2)
-        for clue in selected_clues:
-            clues = find_clue(clues, clue)
-        
-        # Check if the player has the staff_of_wisdom
-        if "staff_of_wisdom" in inventory:
-            print("You use the Staff of Wisdom and can bypass a future puzzle!")
-            player_stats['health'] += 10  # Maybe the player gains health from the wisdom
-        else:
-            print("The clues are cryptic. You must solve the puzzles ahead.")
+        # Ensure challenge_outcome is a tuple if the challenge type requires it
+        if challenge_type.lower() != "none" and not isinstance(challenge_outcome, tuple):
+            raise TypeError(f"Challenge outcome must be a tuple for non-'none' challenge types, found: {type(challenge_outcome).__name__}")
 
-    # Example for other room logic here
+        # Proceed with normal room logic...
+        print(f"\nEntering: {room_description}")
+        if item:
+            print(f"You found an item: {item}")
+            inventory.append(item)
+
+        # Handle challenge logic (if applicable)
+        if challenge_type.lower() != "none":
+            success_message, failure_message, health_penalty = challenge_outcome
+            # Example logic for handling a challenge
+            print(f"You face a {challenge_type} challenge!")
+            outcome = random.choice([True, False])  # Simulating success/failure
+            if outcome:
+                print(success_message)
+            else:
+                print(failure_message)
+                player_stats['health'] -= health_penalty
+
     return player_stats, inventory, clues
 
 def main():
