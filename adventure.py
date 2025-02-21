@@ -1,5 +1,4 @@
 import random
-"""This script implements a text-based adventure game."""
 
 def acquire_item(inventory, item):
     """Appends the item to the inventory list and notifies the player."""
