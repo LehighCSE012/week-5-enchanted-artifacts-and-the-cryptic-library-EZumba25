@@ -77,7 +77,7 @@ def discover_artifact(player_stats, artifacts, artifact_name):
 
         # Remove the artifact from the dictionary
         del artifacts[artifact_name]
-        
+ 
         print(f"The artifact's effect: {artifact['effect']}")
     else:
         print("You found nothing of interest.")
@@ -104,7 +104,7 @@ def enter_dungeon(player_stats, inventory, dungeon_rooms, clues):
         room_description, item, challenge_type, challenge_outcome = room
 
         # Ensure challenge_outcome is a tuple if required
-        if challenge_type.lower() not in ["none", "library"] and not isinstance(challenge_outcome, tuple):
+        if challenge_type.lower() not in["none","library"] and not isinstance(challenge_outcome,tuple):
             raise TypeError("Challenge outcome must be a tuple for challenge types other than 'none' or 'library'.")
 
         # Normal room processing...
