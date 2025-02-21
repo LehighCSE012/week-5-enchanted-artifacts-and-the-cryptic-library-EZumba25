@@ -25,7 +25,7 @@ def test_dungeon_room_tuple_structure():
     clues = set()
     artifacts = {}
     with pytest.raises(TypeError) as excinfo: # Or potentially other errors depending on student's implementation
-        enter_dungeon(player_stats, inventory, dungeon_rooms_bad, clues, artifacts)
+        enter_dungeon(player_stats, inventory, dungeon_rooms_bad, clues)
     assert "tuple" in str(excinfo.value).lower() or "unpack" in str(excinfo.value).lower() # General error check, adjust as needed
 
 def test_dungeon_rooms_challenge_types():
