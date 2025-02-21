@@ -38,16 +38,28 @@ def display_player_status(player_stats):
 def combat_encounter(player_stats, monster_health, has_treasure):
     """Simulate combat encounter."""
     print("A monster appears!")
-    # Simplified combat logic
-    if random.random() < 0.5:
+    # Example combat logic using monster_health
+    while monster_health > 0 and player_stats['health'] > 0:
+        # Simulate player attack
+        damage_dealt = player_stats['attack']
+        monster_health -= damage_dealt
+        print(f"You attack the monster and deal {damage_dealt} damage. Monster health: {monster_health}")
+
+        # If the monster is still alive, it attacks back
+        if monster_health > 0:
+            damage_taken = 10  # Assume the monster does a fixed amount of damage
+            player_stats['health'] -= damage_taken
+            print(f"The monster attacks you and deals {damage_taken} damage. Your health: {player_stats['health']}")
+
+    # Check the outcome of the battle
+    if player_stats['health'] > 0:
         print("You defeated the monster!")
         if has_treasure:
             print("You found treasure!")
-            return 'treasure'
+        return 'treasure'
     else:
         print("You were defeated!")
-        player_stats['health'] -= 10
-    return None
+        return None
 
 def discover_artifact(player_stats, artifacts, artifact_name):
     """Discover an artifact and update player stats."""
