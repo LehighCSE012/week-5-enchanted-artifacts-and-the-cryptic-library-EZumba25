@@ -183,8 +183,7 @@ def main():
 
         # Enter a dungeon and possibly enter the Cryptic Library
         if player_stats['health'] > 0:
-           player_stats, inventory, clues = enter_dungeon(player_stats, inventory, 
-                                                           dungeon_rooms, clues)
+           player_stats,inventory,clues = enter_dungeon(player_stats, inventory,dungeon_rooms, clues)
 
     # Game end display
     print("\n--- Game End ---")
