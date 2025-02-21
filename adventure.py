@@ -50,7 +50,8 @@ def combat_encounter(player_stats, monster_health, has_treasure):
         if monster_health > 0:
             damage_taken = 10  # Assume the monster does a fixed amount of damage
             player_stats['health'] -= damage_taken
-            print(f"The monster attacks you and deals {damage_taken} damage. Your health: {player_stats['health']}")
+            print(f"The monster attacks you and deals {damage_taken} damage."
+                  "Your health: {player_stats['health']}")
 
     # Check the outcome of the battle
     if player_stats['health'] > 0:
@@ -105,8 +106,10 @@ def enter_dungeon(player_stats, inventory, dungeon_rooms, clues):
         room_description, item, challenge_type, challenge_outcome = room
 
         # Ensure challenge_outcome is a tuple if required
-        if challenge_type.lower() not in["none","library"] and not isinstance(challenge_outcome,tuple):
-            raise TypeError("Challenge outcome must be a tuple for challenge types other than 'none' or 'library'.")
+        if challenge_type.lower() not in["none","library"]:
+            if not isinstance(challenge_outcome,tuple):
+                raise TypeError("Challenge outcome must be a tuple for challenge types other"
+                            "than 'none' or 'library'.")
 
         # Normal room processing...
         print(f"\nEntering: {room_description}")
@@ -131,10 +134,10 @@ def enter_dungeon(player_stats, inventory, dungeon_rooms, clues):
 def main():
     """Main game loop."""
     dungeon_rooms = [
-        ("Dusty library", "key", "puzzle", ("Solved puzzle!", "Puzzle unsolved.", -5)),
-        ("Narrow passage, creaky floor", "torch", "trap", ("Avoided trap!", "Triggered trap!", -10)),
+        ("Dusty library", "key", "puzzle", ("Solved puzzle!", "Puzzle unsolved.",-5)),
+        ("Narrow passage, creaky floor", "torch", "trap", ("Avoided trap!","Triggered trap!",-10)),
         ("Grand hall, shimmering pool", "healing potion", "none", None),
-        ("Small room, locked chest", "treasure", "puzzle", ("Cracked code!", "Chest locked.", -5)),
+        ("Small room, locked chest", "treasure", "puzzle", ("Cracked code!","Chest locked.",-5)),
         ("Cryptic Library", None, "library", None)
     ]
 
