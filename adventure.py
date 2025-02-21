@@ -60,9 +60,9 @@ def combat_encounter(player_stats, monster_health, has_treasure):
         if has_treasure:
             print("You found treasure!")
         return 'treasure'
-    else:
-        print("You were defeated!")
-        return None
+
+    print("You were defeated!")
+    return None
 
 def discover_artifact(player_stats, artifacts, artifact_name):
     """Discover an artifact and update player stats."""
@@ -184,7 +184,7 @@ def main():
 
         # Enter a dungeon and possibly enter the Cryptic Library
         if player_stats['health'] > 0:
-           player_stats, inventory, clues = enter_dungeon(player_stats, inventory, 
+            player_stats, inventory, clues = enter_dungeon(player_stats, inventory, 
                                                            dungeon_rooms, clues)
 
     # Game end display
