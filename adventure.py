@@ -1,5 +1,6 @@
 """This module implements a text-based adventure game."""
 import random
+
 def acquire_item(inventory, item):
     """Appends the item to the inventory list and notifies the player."""
     inventory.append(item)
@@ -59,9 +60,9 @@ def combat_encounter(player_stats, monster_health, has_treasure):
         if has_treasure:
             print("You found treasure!")
         return 'treasure'
-
-print("You were defeated!")
-
+    else:
+        print("You were defeated!")
+        return None
 
 def discover_artifact(player_stats, artifacts, artifact_name):
     """Discover an artifact and update player stats."""
@@ -183,7 +184,8 @@ def main():
 
         # Enter a dungeon and possibly enter the Cryptic Library
         if player_stats['health'] > 0:
-           player_stats,inventory,clues = enter_dungeon(player_stats, inventory,dungeon_rooms, clues)
+            player_stats, inventory, clues = enter_dungeon(player_stats, inventory, 
+                                                           dungeon_rooms, clues)
 
     # Game end display
     print("\n--- Game End ---")
