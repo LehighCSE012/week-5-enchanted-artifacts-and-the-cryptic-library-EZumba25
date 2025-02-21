@@ -93,28 +93,37 @@ def find_clue(clues, new_clue):
     return clues
 
 def enter_dungeon(player_stats, inventory, dungeon_rooms, clues):
-    """Handle entering a dungeon room."""
-    current_room = random.choice(dungeon_rooms)
-    print(f"You enter the room: {current_room[0]}")
+    """Handles the player's experience when entering a dungeon room."""
     
-    if current_room[2] == "library":
-        clues_list = ["The treasure is hidden where the dragon sleeps.",
-                      "The key lies with the gnome.",
-                      "Beware the shadows.",
-                      "The amulet unlocks the final door."]
-        
-        selected_clues = random.sample(clues_list, 2)
-        for clue in selected_clues:
-            clues = find_clue(clues, clue)
-        
-        # Check if the player has the staff_of_wisdom
-        if "staff_of_wisdom" in inventory:
-            print("You use the Staff of Wisdom and can bypass a future puzzle!")
-            player_stats['health'] += 10  # Maybe the player gains health from the wisdom
-        else:
-            print("The clues are cryptic. You must solve the puzzles ahead.")
+    for room in dungeon_rooms:
+        try:
+            # Attempt to unpack the room tuple
+            room_description, item, challenge_type, challenge_outcome = room
+        except ValueError as e:
+            raise ValueError(f"Incorrect number of values in room tuple: {room}") from e
 
-    # Example for other room logic here
+        # Ensure challenge_outcome is a tuple if the challenge type is not 'none'
+        if challenge_type.lower() != "none" and not isinstance(challenge_outcome, tuple):
+            raise TypeError("Challenge outcome must be a tuple for non-'none' challenge types.")
+
+        # Normal room processing...
+        print(f"\nEntering: {room_description}")
+        if item:
+            print(f"You found an item: {item}")
+            inventory.append(item)
+
+        if challenge_type.lower() != "none":
+            success_message, failure_message, health_penalty = challenge_outcome
+            print(f"You face a {challenge_type} challenge!")
+
+            # Example challenge logic (random success/failure)
+            outcome = random.choice([True, False])  
+            if outcome:
+                print(success_message)
+            else:
+                print(failure_message)
+                player_stats['health'] -= health_penalty
+
     return player_stats, inventory, clues
 
 def main():
