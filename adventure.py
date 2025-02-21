@@ -43,13 +43,15 @@ def combat_encounter(player_stats, monster_health, has_treasure):
         # Simulate player attack
         damage_dealt = player_stats['attack']
         monster_health -= damage_dealt
-        print(f"You attack the monster and deal {damage_dealt} damage. Monster health: {monster_health}")
+        print(f"You attack the monster and deal {damage_dealt} damage. Monster health: 
+              {monster_health}")
 
         # If the monster is still alive, it attacks back
         if monster_health > 0:
             damage_taken = 10  # Assume the monster does a fixed amount of damage
             player_stats['health'] -= damage_taken
-            print(f"The monster attacks you and deals {damage_taken} damage. Your health: {player_stats['health']}")
+            print(f"The monster attacks you and deals {damage_taken} damage. Your health: 
+                  {player_stats['health']}")
 
     # Check the outcome of the battle
     if player_stats['health'] > 0:
@@ -66,7 +68,7 @@ def discover_artifact(player_stats, artifacts, artifact_name):
     if artifact_name in artifacts:
         artifact = artifacts[artifact_name]
         print(f"You found the {artifact_name}: {artifact['description']}")
-        
+
         # Apply the artifact effect
         if artifact['effect'] == "increases health":
             player_stats['health'] += artifact['power']
@@ -74,7 +76,7 @@ def discover_artifact(player_stats, artifacts, artifact_name):
             player_stats['attack'] += artifact['power']
         elif artifact['effect'] == "solves puzzles":
             print("You can bypass certain puzzles now.")
-        
+
         # Remove the artifact from the dictionary
         del artifacts[artifact_name]
         
