@@ -1,4 +1,5 @@
 import random
+"""This script implements a text-based adventure game."""
 
 def acquire_item(inventory, item):
     """Appends the item to the inventory list and notifies the player."""
@@ -172,7 +173,7 @@ def main():
         treasure_obtained_in_combat = combat_encounter(player_stats, monster_health, has_treasure)
         if treasure_obtained_in_combat:
             print("You have treasure!")
-        
+
         # Check for artifacts after combat
         if random.random() < 0.3:
             artifact_keys = list(artifacts.keys())
@@ -183,7 +184,8 @@ def main():
 
         # Enter a dungeon and possibly enter the Cryptic Library
         if player_stats['health'] > 0:
-            player_stats, inventory, clues = enter_dungeon(player_stats, inventory, dungeon_rooms, clues)
+            player_stats, inventory, clues = enter_dungeon(player_stats, inventory, 
+                                                           dungeon_rooms, clues)
 
     # Game end display
     print("\n--- Game End ---")
